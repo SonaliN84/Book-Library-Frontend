@@ -1,0 +1,12 @@
+.header-container {
+  background-color: blueviolet !important;
+  color: white !important;
+}
+.header-text {
+  color: white !important;
+}
+.loginSignupTitles {
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+}

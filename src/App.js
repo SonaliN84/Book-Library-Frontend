@@ -1,11 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
-import AuthForm from './components/Authentication/AuthForm';
+import "./App.css";
+import { Switch, Route, Redirect } from "react-router-dom";
+import AuthForm from "./components/Authentication/AuthForm";
+import Header from "./components/Layout/Header";
+import RootLayout from "./components/Layout/RootLayout";
 
 function App() {
   return (
-    <AuthForm/>
-        
+    <RootLayout>
+      <Switch>
+        <Route path="/" exact>
+          <AuthForm />
+        </Route>
+      </Switch>
+    </RootLayout>
   );
 }
 
