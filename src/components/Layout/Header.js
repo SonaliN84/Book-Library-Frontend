@@ -19,10 +19,14 @@ const Header = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("isAdmin");
   };
+
+  const showHandler = () => {
+    dispatch(authActions.setShow({ show: true }));
+  };
   return (
     <Navbar expand="lg" className="header-container">
       <Container fluid>
-        <Navbar.Brand href="#" className="header-text mx-2">
+        <Navbar.Brand href="#" className="header-text mx-4">
           Book Library
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
@@ -33,10 +37,18 @@ const Header = () => {
             navbarScroll
           >
             {authIsLoggedIn && (
-              <Nav.Link className="header-text mx-4">Home</Nav.Link>
+              <Nav.Link className="header-text mx-2">Home</Nav.Link>
             )}
             {authIsLoggedIn && isAdmin && (
-              <Nav.Link className="header-text mx-4">Add Book</Nav.Link>
+              <Nav.Link className="header-text mx-2">
+                <NavLink
+                  to="/add-book"
+                  className="loginSignupTitles"
+                  onClick={showHandler}
+                >
+                  Add Book
+                </NavLink>
+              </Nav.Link>
             )}
             {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Action</NavDropdown.Item>

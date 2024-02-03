@@ -24,16 +24,24 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     if (!isLogin && enteredPassword.trim().length < 6) {
-      toast("Password must be at least 6 characters long!");
+      toast.error("Password must be at least 6 characters long!");
       return;
     }
 
     if (isLogin) {
       axios
-        .post("http://127.0.0.1:8000/login", {
-          email: enteredEmail,
-          password: enteredPassword,
-        })
+        .post(
+          "http://127.0.0.1:8000/token",
+          {
+            username: enteredEmail,
+            password: enteredPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        )
         .then((response) => {
           console.log(response.data);
           history.replace("/home");
@@ -47,10 +55,10 @@ const AuthForm = () => {
           localStorage.setItem("isAdmin", response.data.is_Admin);
         })
         .catch((err) => {
-          if (err.request.status) {
-            toast(err.response.data.detail);
+          if (err.request.status == 400) {
+            toast.error(err.response.data.detail);
           } else {
-            toast("Something went wrong!!");
+            toast.error("Something went wrong!!");
           }
         });
     } else {
@@ -63,15 +71,15 @@ const AuthForm = () => {
           password: enteredPassword,
         })
         .then((response) => {
-          toast("You are successfully signed up!!");
+          toast.success("You are successfully signed up!!");
           nameInputRef.current.value = "";
           setIsLogin(true);
         })
         .catch((err) => {
-          if (err.request.status) {
-            toast(err.response.data.detail);
+          if (err.request.status == 400) {
+            toast.error(err.response.data.detail);
           } else {
-            toast("Something went wrong!!");
+            toast.error("Something went wrong!!");
           }
         });
     }
