@@ -8,12 +8,16 @@ import "./Header.css";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { authActions } from "../../Store/auth-slice";
+import { bookActions } from "../../Store/book-slice";
 import AddBook from "../Books/AddBook";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 const Header = () => {
   const dispatch = useDispatch();
   const authIsLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const token = useSelector((state) => state.auth.token);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
 
   const [show, setShow] = useState(false);
@@ -25,6 +29,29 @@ const Header = () => {
     dispatch(authActions.logout());
     localStorage.removeItem("token");
     localStorage.removeItem("isAdmin");
+  };
+
+  const homeClickHandler = () => {
+    console.log("hello");
+  };
+  useEffect(()=>{
+    requestBooksHandler();
+  },[])
+  const requestBooksHandler = () => {
+    axios
+      .get("http://127.0.0.1:8000/pending-books", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        dispatch(bookActions.setpendingBooks(response.data));
+      })
+      .catch((err) => {
+        toast.error("Something went wrong!!!");
+      });
   };
 
   return (
@@ -44,7 +71,11 @@ const Header = () => {
             >
               {authIsLoggedIn && (
                 <Nav.Link className="header-text mx-2">
-                  <NavLink to="/home" className="loginSignupTitles">
+                  <NavLink
+                    to="/home"
+                    className="loginSignupTitles"
+                    onClick={homeClickHandler}
+                  >
                     Home
                   </NavLink>
                 </Nav.Link>
@@ -55,6 +86,19 @@ const Header = () => {
                   onClick={handleShow}
                 >
                   Add Book
+                </Nav.Link>
+              )}
+              {authIsLoggedIn && isAdmin && (
+                <Nav.Link
+                  className="header-text mx-2"
+                >
+                  <NavLink
+                    to="/book-requests"
+                    className="loginSignupTitles"
+                    onClick={requestBooksHandler}
+                  >
+                    Book requests
+                  </NavLink>
                 </Nav.Link>
               )}
               {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
@@ -93,6 +137,7 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <ToastContainer />
     </Fragment>
   );
 };
