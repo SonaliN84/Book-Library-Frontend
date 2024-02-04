@@ -8,11 +8,18 @@ import "./Header.css";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { authActions } from "../../Store/auth-slice";
+import AddBook from "../Books/AddBook";
+import { Fragment, useState } from "react";
 
 const Header = () => {
   const dispatch = useDispatch();
   const authIsLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
@@ -20,37 +27,37 @@ const Header = () => {
     localStorage.removeItem("isAdmin");
   };
 
-  const showHandler = () => {
-    dispatch(authActions.setShow({ show: true }));
-  };
   return (
-    <Navbar expand="lg" className="header-container">
-      <Container fluid>
-        <Navbar.Brand href="#" className="header-text mx-4">
-          Book Library
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: "100px" }}
-            navbarScroll
-          >
-            {authIsLoggedIn && (
-              <Nav.Link className="header-text mx-2">Home</Nav.Link>
-            )}
-            {authIsLoggedIn && isAdmin && (
-              <Nav.Link className="header-text mx-2">
-                <NavLink
-                  to="/add-book"
-                  className="loginSignupTitles"
-                  onClick={showHandler}
+    <Fragment>
+      <AddBook show={show} handleClose={handleClose} />
+      <Navbar expand="lg" className="header-container" fixed="top">
+        <Container fluid>
+          <Navbar.Brand href="#" className="header-text mx-4">
+            Book Library
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarScroll" />
+          <Navbar.Collapse id="navbarScroll">
+            <Nav
+              className="me-auto my-2 my-lg-0"
+              style={{ maxHeight: "100px" }}
+              navbarScroll
+            >
+              {authIsLoggedIn && (
+                <Nav.Link className="header-text mx-2">
+                  <NavLink to="/home" className="loginSignupTitles">
+                    Home
+                  </NavLink>
+                </Nav.Link>
+              )}
+              {authIsLoggedIn && isAdmin && (
+                <Nav.Link
+                  className="loginSignupTitles header-text mx-2"
+                  onClick={handleShow}
                 >
                   Add Book
-                </NavLink>
-              </Nav.Link>
-            )}
-            {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
+                </Nav.Link>
+              )}
+              {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action4">
                 Another action
@@ -60,8 +67,8 @@ const Header = () => {
                 Something else here
               </NavDropdown.Item>
             </NavDropdown> */}
-          </Nav>
-          {/* <Form className="d-flex">
+            </Nav>
+            {/* <Form className="d-flex">
             <Form.Control
               type="search"
               placeholder="Search"
@@ -70,22 +77,23 @@ const Header = () => {
             />
             <Button variant="outline-success">Search</Button>
           </Form> */}
-          <Nav>
-            {authIsLoggedIn && (
-              <Nav.Link className="header-text mx-4">
-                <NavLink
-                  to="/"
-                  onClick={logoutHandler}
-                  className="loginSignupTitles"
-                >
-                  Logout
-                </NavLink>
-              </Nav.Link>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+            <Nav>
+              {authIsLoggedIn && (
+                <Nav.Link className="header-text mx-4">
+                  <NavLink
+                    to="/"
+                    onClick={logoutHandler}
+                    className="loginSignupTitles"
+                  >
+                    Logout
+                  </NavLink>
+                </Nav.Link>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </Fragment>
   );
 };
 

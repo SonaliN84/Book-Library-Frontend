@@ -9,7 +9,6 @@ const initialAuthState = {
   token: initialToken,
   isLoggedIn: userIsLoggedIn,
   isAdmin: convertToBooleanIsAdmin,
-  show:false
 };
 
 const authSlice = createSlice({
@@ -25,9 +24,6 @@ const authSlice = createSlice({
       state.token = null;
       state.isLoggedIn = false;
     },
-    setShow(state,action){
-        state.show=action.payload.show
-    }
   },
 });
 export const authActions = authSlice.actions;

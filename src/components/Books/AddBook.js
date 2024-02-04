@@ -9,14 +9,10 @@ import { ToastContainer, toast } from "react-toastify";
 
 import Form from "react-bootstrap/Form";
 
-const AddBook = () => {
-  const dispatch = useDispatch();
-  const show = useSelector((state) => state.auth.show);
+const AddBook = (props) => {
   const token = useSelector((state) => state.auth.token);
   console.log("token", token);
-  const handleClose = () => {
-    dispatch(authActions.setShow({ show: false }));
-  };
+
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -64,7 +60,7 @@ const AddBook = () => {
 
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={props.show} onHide={props.handleClose}>
         <Modal.Header closeButton>
           <Modal.Title style={{ color: "blueviolet" }}>Add book</Modal.Title>
         </Modal.Header>
@@ -123,6 +119,7 @@ const AddBook = () => {
                 type="number"
                 min="0"
                 max="5"
+                step="0.1"
                 placeholder="Rating"
                 className="book-data shadow-none"
                 name="rating"
@@ -183,6 +180,7 @@ const AddBook = () => {
             </Form.Group>
             <div className="newbutton">
               <button className="submit-button">Add book</button>
+              {/* <button className="submit-button"><NavLink to="/home">Close</NavLink></button> */}
             </div>
           </Form>
         </Modal.Body>
