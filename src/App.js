@@ -7,7 +7,7 @@ import AddBook from "./components/Books/AddBook";
 import { useSelector } from "react-redux";
 import BookList from "./components/Books/BookList";
 import BookDetail from "./components/Books/BookDetail";
-
+import BookRequests from "./components/Books/BookRequests";
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
@@ -24,6 +24,9 @@ function App() {
         </Route>
         <Route path="/home/:bookId">
           <BookDetail />
+        </Route>
+        <Route path="/book-requests">
+          <BookRequests />
         </Route>
       </Switch>
     </RootLayout>
