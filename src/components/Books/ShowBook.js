@@ -2,9 +2,34 @@ import Card from "react-bootstrap/Card";
 import styles from "./Books.module.css";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { bookActions } from "../../Store/book-slice";
+
 const ShowBook = (props) => {
+  const token = useSelector((state) => state.auth.token);
+  const show = useSelector((state) => state.book.show);
+  const dispatch = useDispatch();
+  const bookHandler = () => {
+    axios
+      .get(`http://127.0.0.1:8000/get-book-detail/${props.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        dispatch(bookActions.setShow(true));
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(bookActions.setShow(false));
+      });
+  };
+
   return (
-    <Card className={styles.cardbox}>
+    <Card className={styles.cardbox} onClick={bookHandler}>
       <NavLink to={`/home/${props.id}`} className={styles["link-box"]}>
         <Card.Img
           variant="top"

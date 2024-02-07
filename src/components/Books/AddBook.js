@@ -8,20 +8,14 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
 import Form from "react-bootstrap/Form";
+import { bookActions } from "../../Store/book-slice";
 
 const AddBook = (props) => {
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const total = useSelector((state) => state.book.total);
   console.log("token", token);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    description: "",
-    rating: "",
-    launched: "",
-    quantity: "",
-    image: "",
-  });
   const formSubmitHandler = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -36,24 +30,15 @@ const AddBook = (props) => {
         },
       })
       .then((response) => {
-        toast.success("Book added successfully!");
-        // handleClose();
-        setFormData({
-          title: "",
-          author: "",
-          description: "",
-          rating: "",
-          launched: "",
-          quantity: "",
-          image: "",
-        });
+        alert("Book added successfully!");
+        dispatch(bookActions.setTotal(total + 1));
       })
       .catch((err) => {
         if (err.request.status == 400) {
-          toast.error(err.response.data.detail);
+          alert(err.response.data.detail);
         } else {
           console.log(err);
-          toast.error("Something went wrong!!");
+          alert("Something went wrong!!");
         }
       });
   };
@@ -73,10 +58,6 @@ const AddBook = (props) => {
                 placeholder="Title"
                 name="title"
                 required
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
               />
             </Form.Group>
 
@@ -87,10 +68,6 @@ const AddBook = (props) => {
                 placeholder="Author"
                 name="author"
                 required
-                value={formData.author}
-                onChange={(e) =>
-                  setFormData({ ...formData, author: e.target.value })
-                }
               />
             </Form.Group>
 
@@ -104,10 +81,6 @@ const AddBook = (props) => {
                 placeholder="Description"
                 name="description"
                 required
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
               />
             </Form.Group>
 
@@ -124,10 +97,6 @@ const AddBook = (props) => {
                 className="book-data shadow-none"
                 name="rating"
                 required
-                value={formData.rating}
-                onChange={(e) =>
-                  setFormData({ ...formData, rating: e.target.value })
-                }
               />
             </Form.Group>
             <Form.Group
@@ -140,10 +109,6 @@ const AddBook = (props) => {
                 placeholder="Launched date"
                 name="launched"
                 required
-                value={formData.launched}
-                onChange={(e) =>
-                  setFormData({ ...formData, launched: e.target.value })
-                }
               />
             </Form.Group>
             <Form.Group
@@ -156,28 +121,9 @@ const AddBook = (props) => {
                 placeholder="Image url"
                 name="image"
                 required
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3 book-text"
-              controlId="formBasicPassword"
-            >
-              <Form.Control
-                type="text"
-                className="book-data shadow-none"
-                placeholder="Quantity"
-                name="quantity"
-                required
-                value={formData.quantity}
-                onChange={(e) =>
-                  setFormData({ ...formData, quantity: e.target.value })
-                }
-              />
-            </Form.Group>
+
             <div className="newbutton">
               <button className="submit-button">Add book</button>
               {/* <button className="submit-button"><NavLink to="/home">Close</NavLink></button> */}
