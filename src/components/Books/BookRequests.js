@@ -14,6 +14,7 @@ const BookRequests = () => {
         pendingBooks.map((item) => (
           <ShowPendingBook
             key={item.id}
+            id={item.id}
             studentName={item.username}
             studentEmail={item.useremail}
             bookTitle={item.book_title}

@@ -24,7 +24,7 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     if (!isLogin && enteredPassword.trim().length < 6) {
-      toast.error("Password must be at least 6 characters long!");
+      alert("Password must be at least 6 characters long!");
       return;
     }
 
@@ -55,10 +55,10 @@ const AuthForm = () => {
           localStorage.setItem("isAdmin", response.data.is_Admin);
         })
         .catch((err) => {
-          if (err.request.status == 400) {
-            toast.error(err.response.data.detail);
+          if (err.request.status == 401) {
+            alert(err.response.data.detail);
           } else {
-            toast.error("Something went wrong!!");
+            alert("Something went wrong!!");
           }
         });
     } else {
@@ -71,20 +71,18 @@ const AuthForm = () => {
           password: enteredPassword,
         })
         .then((response) => {
-          toast.success("You are successfully signed up!!");
+          alert("You are successfully signed up!!");
           nameInputRef.current.value = "";
           setIsLogin(true);
         })
         .catch((err) => {
           if (err.request.status == 400) {
-            toast.error(err.response.data.detail);
+            alert(err.response.data.detail);
           } else {
-            toast.error("Something went wrong!!");
+            alert("Something went wrong!!");
           }
         });
     }
-    emailInputRef.current.value = "";
-    passwordInputRef.current.value = "";
   };
   return (
     <div className="form-box">

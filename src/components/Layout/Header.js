@@ -19,6 +19,7 @@ const Header = () => {
   const authIsLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const token = useSelector((state) => state.auth.token);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const toggle = useSelector((state) => state.book.toggle);
 
   const [show, setShow] = useState(false);
 
@@ -29,14 +30,24 @@ const Header = () => {
     dispatch(authActions.logout());
     localStorage.removeItem("token");
     localStorage.removeItem("isAdmin");
+    dispatch(bookActions.setBooks([]));
+    dispatch(bookActions.setMyBooks([]));
+    dispatch(bookActions.setShow(true));
+    dispatch(bookActions.setStatusBooks([]));
+    dispatch(bookActions.setToggle(true));
+    dispatch(bookActions.setTotal(0));
+    dispatch(bookActions.setpendingBooks([]));
   };
 
   const homeClickHandler = () => {
     console.log("hello");
+    dispatch(bookActions.setToggle(!toggle));
   };
-  useEffect(()=>{
-    requestBooksHandler();
-  },[])
+  useEffect(() => {
+    if(authIsLoggedIn){
+      requestBooksHandler();
+    }  
+  }, []);
   const requestBooksHandler = () => {
     axios
       .get("http://127.0.0.1:8000/pending-books", {
@@ -50,7 +61,41 @@ const Header = () => {
         dispatch(bookActions.setpendingBooks(response.data));
       })
       .catch((err) => {
-        toast.error("Something went wrong!!!");
+        alert("Something went wrong!!!");
+      });
+  };
+
+  const myBooksHandler = () => {
+    axios
+      .get("http://127.0.0.1:8000/my-books", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        dispatch(bookActions.setMyBooks(response.data));
+      })
+      .catch((err) => {
+        alert("Something went wrong!!!");
+      });
+  };
+
+  const statusHandler = (status) => {
+    axios
+      .get(`http://127.0.0.1:8000/book/${status}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        dispatch(bookActions.setStatusBooks(response.data));
+      })
+      .catch((err) => {
+        alert("Something went wrong!!!");
       });
   };
 
@@ -89,9 +134,7 @@ const Header = () => {
                 </Nav.Link>
               )}
               {authIsLoggedIn && isAdmin && (
-                <Nav.Link
-                  className="header-text mx-2"
-                >
+                <Nav.Link className="header-text mx-2">
                   <NavLink
                     to="/book-requests"
                     className="loginSignupTitles"
@@ -101,26 +144,50 @@ const Header = () => {
                   </NavLink>
                 </Nav.Link>
               )}
-              {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action4">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action5">
-                Something else here
-              </NavDropdown.Item>
-            </NavDropdown> */}
+              {authIsLoggedIn && (
+                <Nav.Link className="header-text mx-2">
+                  <NavLink
+                    to="/my-books"
+                    className="loginSignupTitles"
+                    onClick={myBooksHandler}
+                  >
+                    My books
+                  </NavLink>
+                </Nav.Link>
+              )}
+              {authIsLoggedIn && (
+                <NavDropdown title="status" id="navbarScrollingDropdown">
+                  <NavDropdown.Item>
+                    <NavLink
+                      to="/status"
+                      className="loginSignupTitles1"
+                      onClick={() => statusHandler("Pending")}
+                    >
+                      Pending books
+                    </NavLink>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item>
+                    <NavLink
+                      to="/status"
+                      className="loginSignupTitles1"
+                      onClick={() => statusHandler("Rejected")}
+                    >
+                      Rejected books
+                    </NavLink>
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item>
+                    <NavLink
+                      to="/status"
+                      className="loginSignupTitles1"
+                      onClick={() => statusHandler("Returned")}
+                    >
+                      Returned books
+                    </NavLink>
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
             </Nav>
-            {/* <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-            />
-            <Button variant="outline-success">Search</Button>
-          </Form> */}
             <Nav>
               {authIsLoggedIn && (
                 <Nav.Link className="header-text mx-4">
